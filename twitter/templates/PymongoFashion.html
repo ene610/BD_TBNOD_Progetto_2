@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+    <title>Analisi batch argomento Fashion</title>
+</head>
+<body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+<script src="//d3plus.org/js/d3.js"></script>
+<script src="//d3plus.org/js/d3plus.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
+<!-- create container element for visualization -->
+<div style="width: 85%;">
+    <canvas id="viz"></canvas>
+</div>
+
+
+<script>
+
+    alfa =  {{ data1|safe }}
+
+    dataset = []
+    labelPunti = []
+    alfa.forEach(function(element){
+        punto = {"x":element.engagement_rate,"y":element.followers,"label":element.utente}
+        dataset.push(punto)
+
+    })
+
+  var ctx = document.getElementById("viz").getContext('2d');
+
+    var scatterChart;
+    scatterChart = new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Engagement rate per autori Fashion',
+                    data: dataset,
+                    backgroundColor: 'rgba(230,25,75,1)'
+                }]
+            },
+            options: {
+                tooltips: {
+                    callbacks: {
+                        label: function(tooltipItem,data){
+                            return alfa[tooltipItem.index].utente + " | engagement rate : " + tooltipItem.xLabel +
+                                " | #followers: " + tooltipItem.yLabel
+                                ;
+                            }
+                        }
+                    }
+                }
+            }
+    );
+
+
+
+
+
+
+</script>

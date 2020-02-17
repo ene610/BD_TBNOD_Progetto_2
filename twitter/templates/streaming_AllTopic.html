@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Analisi real-time tutti i topic</title>
+    <script src="static/js/lib/Chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="static/css/dashboard.css">
+
+</head>
+<body>
+    <div class="header">
+        <div style="width: 70%;">
+            <canvas id="TweetsForCategoryChart" ></canvas>
+        </div>
+        <div style="width: 70%;">
+            <canvas id="HashtagsForCategoryChart" ></canvas>
+        </div>
+
+        <script>
+var urlRoute = "/AllTopic"
+var src_parola_count = [];
+var src_hashtags_count = [];
+var src_author_followers = [];
+var count = [];
+var words = [];
+var authors = [];
+var followers = [];
+var hashtags = [];
+var hashtags_count = [];
+var src_tweets_counter_topic_Musica =  [0,0,0,0,0,0,0,0,0,0]
+var src_tweets_counter_topic_Sport =   [0,0,0,0,0,0,0,0,0,0]
+var src_tweets_counter_topic_Fashion = [0,0,0,0,0,0,0,0,0,0]
+var src_tweets_counter_topic_Fitness = [0,0,0,0,0,0,0,0,0,0,0]
+
+var src_hashtags_counter_topic_Musica = [0,0,0,0,0,0,0,0,0,0]
+var src_hashtags_counter_topic_Sport =  [0,0,0,0,0,0,0,0,0,0]
+var src_hashtags_counter_topic_Fashion =[0,0,0,0,0,0,0,0,0,0]
+var src_hashtags_counter_topic_Fitness =[0,0,0,0,0,0,0,0,0,0]
+
+var src_tweets_current_time =   ["-","-","-","-","-","-","-","-","-","-"]
+var src_hashtags_current_time = ["-","-","-","-","-","-","-","-","-","-"]
+
+
+
+setInterval(function(){
+    $.getJSON(urlRoute + '/refresh_tweets_counter', {
+    }, function(data) {
+        src_tweets_counter_topic = data.counter_Category
+        src_tweets_counter_topic_Sport.push(src_tweets_counter_topic[0])
+        src_tweets_counter_topic_Fashion.push(src_tweets_counter_topic[1])
+        src_tweets_counter_topic_Musica.push(src_tweets_counter_topic[2])
+        src_tweets_counter_topic_Fitness.push(src_tweets_counter_topic[3])
+        src_tweets_counter_topic_Sport.shift()
+        src_tweets_counter_topic_Fashion.shift()
+        src_tweets_counter_topic_Musica.shift()
+        src_tweets_counter_topic_Fitness.shift()
+        src_tweets_current_time.push(data.orarioArrivo)
+        src_tweets_current_time.shift()
+        elementID = document.getElementById('TweetsForCategoryChart').getContext('2d');
+        text = 'Numero di tweet per categoria'
+        createTweetLineChart(elementID,text,src_tweets_current_time,src_tweets_counter_topic_Musica,
+            src_hashtags_counter_topic_Fitness,src_tweets_counter_topic_Sport,src_tweets_counter_topic_Fashion);
+
+    });
+
+},60000);
+
+setInterval(function(){
+    $.getJSON(urlRoute + '/refresh_hashtags_counter', {
+    }, function(data) {
+
+        src_hashtags_counter_topic_Sport.push(data.counter_hashtags[0])
+        src_hashtags_counter_topic_Fashion.push(data.counter_hashtags[1])
+        src_hashtags_counter_topic_Musica.push(data.counter_hashtags[2])
+        src_hashtags_counter_topic_Fitness.push(data.counter_hashtags[3])
+
+        src_hashtags_counter_topic_Sport.shift()
+        src_hashtags_counter_topic_Fashion.shift()
+        src_hashtags_counter_topic_Musica.shift()
+        src_hashtags_counter_topic_Fitness.shift()
+
+        src_hashtags_current_time.push(data.orarioArrivo_hashtags)
+        src_hashtags_current_time.shift()
+
+        elementID = document.getElementById('HashtagsForCategoryChart').getContext('2d');
+        text = 'Numero di hahshtags per categoria'
+        createTweetLineChart(elementID,text,src_hashtags_current_time,src_hashtags_counter_topic_Musica,
+                                src_hashtags_counter_topic_Fitness,src_hashtags_counter_topic_Sport,
+                                    src_hashtags_counter_topic_Fashion);
+    });
+
+},60000);
+
+
+function createTweetLineChart(elementID,text,arrayOrario,arrayMusica,arrayFitness,arraySport,arrayFashion) {
+    var ctx = elementID;
+    var myLineChart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: arrayOrario,
+    datasets: [{
+        data: arraySport,
+        label: "Sport",
+        borderColor: "#3e95cd",
+        fill: false
+      }, {
+        data: arrayFashion,
+        label: "Fashion",
+        borderColor: "#8e5ea2",
+        fill: false
+      }, {
+        data: arrayFitness,
+        label: "Fitness",
+        borderColor: "#3cba9f",
+        fill: false
+      }, {
+        data: arrayMusica,
+        label: "Musica",
+        borderColor: "#e8c3b9",
+        fill: false
+      }
+    ]
+  },
+  options: {
+    title: {
+      display: true,
+      text: text
+    }
+  }
+});
+
+}
+
+
+
+        </script>
+    </div>
+
+</body>

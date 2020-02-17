@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Analisi real-time argomento Fitness</title>
+    <script src="static/js/lib/Chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="static/css/dashboard.css">
+
+</head>
+<body>
+    <div class="header">
+        <div style="width: 70%;">
+            <canvas id="WordCountChart" ></canvas>
+        </div>
+        <div style="width: 70%;">
+            <canvas id="AuthorFollowersChart" ></canvas>
+        </div>
+        <div style="width: 70%;">
+            <canvas id="MostUsedHashtagsChart" ></canvas>
+        </div>
+
+        <script>
+var urlRoute = "/Fitness"
+var src_parola_count = [];
+var src_hashtags_count = [];
+var src_author_followers = [];
+var count = [];
+var words = [];
+var authors = [];
+var followers = [];
+var hashtags = [];
+var hashtags_count = [];
+
+setInterval(function(){
+    $.getJSON(urlRoute + '/refresh_word_counter', {
+    }, function(data) {
+        src_parola_count = data.sParola_counter
+    });
+    console.log("parolaCount",src_parola_count)
+    words = [];
+    count = [];
+    createWordCountChart(src_parola_count)
+},30000);
+
+setInterval(function(){
+    $.getJSON(urlRoute + '/refresh_hashtags_counter', {
+    }, function(data) {
+        src_hashtags_count = data.sHashtags_Counter
+    });
+    console.log("hashtags_count",src_hashtags_count)
+    hashtags_count = [];
+    hashtags = [];
+    createMostUsedHashtagsChart(src_hashtags_count)
+},30000);
+
+setInterval(function(){
+    $.getJSON(urlRoute + '/refresh_author_follower', {
+    }, function(data) {src_author_followers = data.sAuthor});
+    console.log("author_followers",src_author_followers)
+    authors = [];
+    followers = [];
+    createAuthorFollowersChart(src_author_followers)
+},30000);
+
+function createWordCountChart(array){
+    var ctx = document.getElementById('WordCountChart').getContext('2d');
+    divideWordCount(array)
+    var chart = new Chart(ctx, {
+    // The type of chart we want to create
+    type: 'bar',
+
+    // The data for our dataset
+    data: {
+        labels: words,
+        datasets: [{
+            label: 'Parole più utilizzate',
+            backgroundColor: 'rgb(215, 255, 55)',
+            borderColor: 'rgb(215, 255, 55)',
+            data: count
+        }]
+    },
+    options: {
+    scales: {
+        yAxes: [{
+            ticks: {
+                beginAtZero: true
+            }
+        }]
+    }
+}
+
+});}
+
+function divideWordCount(array) {
+        for (i=0 ; i<25 ; i++) {
+            if (array[i] != undefined) {
+                words.push(array[i].word)
+                count.push(array[i].count)
+            }
+        }
+    }
+
+function createAuthorFollowersChart(array) {
+    var ctx = document.getElementById('AuthorFollowersChart').getContext('2d');
+
+    divideAuthorFollower(array)
+    var chart = new Chart(ctx, {
+        // The type of chart we want to create
+        type: 'bar',
+
+        // The data for our dataset
+        data: {
+            labels: authors,
+            datasets: [{
+                label: 'Autori più seguiti',
+                backgroundColor: 'rgb(215, 255, 55)',
+                borderColor: 'rgb(215, 255, 55)',
+                data: followers
+            }]
+        },
+
+        // Configuration options go here
+        options: {}
+    });}
+
+function divideAuthorFollower(array) {
+        for (i = 0; i < 10; i++) {
+            if (array[i] != undefined) {
+                authors.push(array[i].author)
+                followers.push(array[i].count_follower)
+            }
+
+        }
+}
+
+function createMostUsedHashtagsChart(array) {
+        var ctx = document.getElementById('MostUsedHashtagsChart').getContext('2d');
+
+        divideHashtagsCount(array)
+        var chart = new Chart(ctx, {
+            // The type of chart we want to create
+            type: 'bar',
+
+            // The data for our dataset
+            data: {
+                labels: hashtags,
+                datasets: [{
+                    label: 'Hashtag più utilizzati',
+                    backgroundColor: 'rgb(215, 255, 55)',
+                    borderColor: 'rgb(215, 255, 55)',
+                    data: hashtags_count
+                }]
+            },
+           options: {
+    scales: {
+        yAxes: [{
+            ticks: {
+                beginAtZero: true
+            }
+        }]
+    }
+}
+
+        });}
+
+function divideHashtagsCount(array) {
+        for (i = 0; i < 25; i++) {
+            if (array[i] != undefined) {
+                hashtags.push(array[i].hashtag_text)
+                hashtags_count.push(array[i].hashtag_count)
+            }
+        }
+    }
+
+
+
+        </script>
+    </div>
+
+</body>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+<script src="//d3plus.org/js/d3.js"></script>
+<script src="//d3plus.org/js/d3plus.js"></script>
+
+<!-- create container element for visualization -->
+
+<div id="viz"></div>
+
+<script>
+
+    alfa =  {{ data1|safe }}
+    console.log(typeof(alfa));
+    console.log(alfa);
+    console.log();
+
+  // sample data array
+  var sample_data = [
+    {"value": 100, "weight": .45, "type": "alpha"},
+    {"value": 70, "weight": .60, "type": "beta"},
+    {"value": 40, "weight": -.2, "type": "gamma"},
+    {"value": 15, "weight": .1, "type": "delta"}
+  ];
+
+  sleep(2000)
+  // instantiate d3plus
+  var visualization = d3plus.viz()
+    .container("#viz")  // container DIV to hold the visualization
+    .data(alfa)  // data to use with the visualization
+    .type("scatter")    // visualization type
+    .id("utente")         // key for which our data is unique on
+      .size(5)
+      .x("followers")         // key for x-axis
+    .y("engagement_rate")        // key for y-axis
+
+    .draw();             // finally, draw the visualization!
+
+    console.log(sample_data);
+
+    function sleep(milliseconds) {
+         var start = new Date().getTime();
+        for (var i = 0; i < 1e7; i++) {
+            if ((new Date().getTime() - start) > milliseconds){
+                break;
+        }
+    }
+}
+</script>

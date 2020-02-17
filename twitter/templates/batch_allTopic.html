@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Analisi su tutti i topic</title>
+    <script src="static/js/lib/Chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="static/css/dashboard.css">
+
+</head>
+<body>
+    <div class="header">
+        <div style="width: 70%;">
+            <canvas id="TweetsForCategoryChart" ></canvas>
+        </div>
+        <div style="width: 70%;">
+            <canvas id="HashtagsForCategoryChart" ></canvas>
+        </div>
+
+        <script>
+
+var src_tweets_counter_topic_Musica = []
+var src_tweets_counter_topic_Sport = []
+var src_tweets_counter_topic_Fashion = []
+var src_tweets_counter_topic_Fitness = []
+
+var src_hashtags_counter_topic_Musica = []
+var src_hashtags_counter_topic_Sport = []
+var src_hashtags_counter_topic_Fashion = []
+var src_hashtags_counter_topic_Fitness = []
+
+var src_tweets_current_time = []
+var src_hashtags_current_time = []
+
+console.log("ooooo")
+
+$.getJSON("/AllTopicBatch" + '/refresh_hashtags_counter', {
+    }, function(data) {
+        console.log("ehi",data)
+        src_hashtags_current_time = data.arrayOrarioHashtags
+        src_hashtags_counter_topic_Musica = data.count_Hashtags_Musica
+        src_hashtags_counter_topic_Sport = data.count_Hashtags_Sport
+        src_hashtags_counter_topic_Fashion = data.count_Hashtags_Fashion
+        src_hashtags_counter_topic_Fitness = data.count_Hashtags_Fitness
+
+        elementID = document.getElementById('HashtagsForCategoryChart').getContext('2d');
+        text = 'Numero di hahshtags per categoria'
+        createTweetLineChart(elementID,text,src_hashtags_current_time,src_hashtags_counter_topic_Musica,
+                                src_hashtags_counter_topic_Fitness,src_hashtags_counter_topic_Sport,
+                                    src_hashtags_counter_topic_Fashion);
+    });
+
+
+$.getJSON("/AllTopicBatch" + '/refresh_tweets_counter', {
+    }, function(data) {
+        console.log("ehi",data)
+        src_tweets_current_time = data.arrayOrarioTweets
+        src_tweets_counter_topic_Sport = data.count_Tweets_Sport
+        src_tweets_counter_topic_Fashion = data.count_Tweets_Fashion
+        src_tweets_counter_topic_Fitness = data.count_Tweets_Fitness
+        src_tweets_counter_topic_Musica = data.count_Tweets_Musica
+
+        elementID = document.getElementById('TweetsForCategoryChart').getContext('2d');
+        text = 'Numero di tweet per categoria'
+        createTweetLineChart(elementID,text,src_tweets_current_time,src_tweets_counter_topic_Musica,
+            src_hashtags_counter_topic_Fitness,src_tweets_counter_topic_Sport,src_tweets_counter_topic_Fashion);
+
+    });
+
+
+function createTweetLineChart(elementID,text,arrayOrario,arrayMusica,arrayFitness,arraySport,arrayFashion) {
+    var ctx = elementID;
+    var myLineChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+    labels: arrayOrario,
+    datasets: [{
+        data: arraySport,
+        label: "Sport",
+        borderColor: "#3e95cd",
+        fill: false
+      }, {
+        data: arrayFashion,
+        label: "Fashion",
+        borderColor: "#8e5ea2",
+        fill: false
+      }, {
+        data: arrayFitness,
+        label: "Fitness",
+        borderColor: "#3cba9f",
+        fill: false
+      }, {
+        data: arrayMusica,
+        label: "Musica",
+        borderColor: "#e8c3b9",
+        fill: false
+      }
+    ]
+  },
+  options: {
+    title: {
+      display: true,
+      text: text
+    }
+  }
+});
+
+}
+
+        </script>
+    </div>
+
+</body>
