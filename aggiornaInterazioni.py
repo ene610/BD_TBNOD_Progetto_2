@@ -22,7 +22,6 @@ def retriveStats(tweet_retrived,screen_name,date,tweet_id):
     twint.run.Search(c)
 
     for tweet in tweets:
-        print(tweet.username,":",tweet.id, "|",tweet_id)
         if (tweet.id == tweet_id):
             newTweet = copy.deepcopy(tweet_retrived)
             newTweet["replies_count"] = tweet.replies_count
