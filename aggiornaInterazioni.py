@@ -1,8 +1,4 @@
 from __future__ import absolute_import, print_function
-
-
-#deve fare solo una batch analisi ! niente streaming
-
 from kafka import KafkaProducer
 from tweepy import OAuthHandler, Stream, StreamListener
 from pymongo import MongoClient
@@ -43,11 +39,5 @@ mycol = mydb.Sport
 a = mycol.find(no_cursor_timeout=True)
 
 for x in a:
-
-    if(x != None and x["screen_name"]!="fcin1908it"):
-        modified = retriveStats(x,x["screen_name"],x["created_at_Date"],x["id_tweet"])
-        if (modified != None):
-            print(modified)
-            print(x)
-            mycol.replace_one(x,modified)
+    mycol.replace_one(x,modified)
 a.close()
